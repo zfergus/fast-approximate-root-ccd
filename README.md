@@ -1,4 +1,4 @@
-# Fast Root Approximate in Cubic CCD
+# Fast Approximate Root in Cubic CCD
 
 > ⚠️ **This implementation is still a work in progress and has not been thoroughly tested.**
 

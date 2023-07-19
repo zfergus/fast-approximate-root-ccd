@@ -1,0 +1,9 @@
+#pragma once
+
+// WARNING: Do not modify config.hpp directly. Instead, modify config.hpp.in.
+
+#define FAR_CCD_NAME "@PROJECT_NAME@"
+#define FAR_CCD_VER "@PROJECT_VERSION@"
+#define FAR_CCD_VER_MAJOR "@PROJECT_VERSION_MAJOR@"
+#define FAR_CCD_VER_MINOR "@PROJECT_VERSION_MINOR@"
+#define FAR_CCD_VER_PATCH "@PROJECT_VERSION_PATCH@"
