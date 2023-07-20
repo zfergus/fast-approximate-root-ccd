@@ -14,7 +14,7 @@ namespace {
     {
         if (std::abs(a) < EPSILON) {
             // x = -c / b
-            return { -c / b, -c / b };
+            return { { -c / b, -c / b } };
         }
 
         // x = (-b +- √(b² - 4ac)) / (2a)
@@ -24,8 +24,8 @@ namespace {
             return {};
         }
         const double sqrt_discriminant = std::sqrt(discriminant);
-        std::array<double, 2> r = { (-b + sqrt_discriminant) / (2 * a),
-                                    (-b - sqrt_discriminant) / (2 * a) };
+        std::array<double, 2> r = { { (-b + sqrt_discriminant) / (2 * a),
+                                      (-b - sqrt_discriminant) / (2 * a) } };
         if (r[0] > r[1]) {
             std::swap(r[0], r[1]);
         }
