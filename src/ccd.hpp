@@ -25,26 +25,7 @@ struct CubicEquation {
         return x * (x * 3 * a + 2 * b) + c;
     }
 
-    std::array<double, 2> extrema() const
-    {
-        // x = (-b +- √(b² - 4ac)) / (2a)
-        const double a = 3 * this->a;
-        const double b = 2 * this->b;
-        // double c = this->c;
-
-        const double discriminant = b * b - 4 * a * c;
-        if (discriminant < 0) {
-            assert(false);
-            return {};
-        }
-        const double sqrt_discriminant = std::sqrt(discriminant);
-        std::array<double, 2> r = { (-b + sqrt_discriminant) / (2 * a),
-                                    (-b - sqrt_discriminant) / (2 * a) };
-        if (r[0] > r[1]) {
-            std::swap(r[0], r[1]);
-        }
-        return r;
-    }
+    std::array<double, 2> extrema() const;
 };
 
 struct RootInterval {

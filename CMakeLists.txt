@@ -62,7 +62,7 @@ project(FAR_CCD
         LANGUAGES CXX
         VERSION "0.0.1")
 
-# option(FAR_CCD_BUILD_TESTS "Build unit-tests" ${FAR_CCD_TOPLEVEL_PROJECT})
+option(FAR_CCD_BUILD_TESTS "Build unit-tests" ${FAR_CCD_TOPLEVEL_PROJECT})
 
 # Set default minimum C++ standard
 if(FAR_CCD_TOPLEVEL_PROJECT)
@@ -135,8 +135,8 @@ target_compile_features(far_ccd PUBLIC cxx_std_17)
 ################################################################################
 
 # Enable unit testing at the root level
-# if(FAR_CCD_TOPLEVEL_PROJECT AND FAR_CCD_BUILD_TESTS)
-#   include(CTest)
-#   enable_testing()
-#   add_subdirectory(tests)
-# endif()
+if(FAR_CCD_TOPLEVEL_PROJECT AND FAR_CCD_BUILD_TESTS)
+  include(CTest)
+  enable_testing()
+  add_subdirectory(tests)
+endif()
