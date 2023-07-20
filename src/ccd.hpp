@@ -52,14 +52,14 @@ struct RootInterval {
 /// @param toi Computed time of impact.
 /// @return True if the point and triangle collide, false otherwise.
 bool point_triangle_ccd(
-    const Eigen::Vector3d& p_t0,
-    const Eigen::Vector3d& t0_t0,
-    const Eigen::Vector3d& t1_t0,
-    const Eigen::Vector3d& t2_t0,
-    const Eigen::Vector3d& p_t1,
-    const Eigen::Vector3d& t0_t1,
-    const Eigen::Vector3d& t1_t1,
-    const Eigen::Vector3d& t2_t1,
+    const Eigen::Ref<const Eigen::Vector3d>& p_t0,
+    const Eigen::Ref<const Eigen::Vector3d>& t0_t0,
+    const Eigen::Ref<const Eigen::Vector3d>& t1_t0,
+    const Eigen::Ref<const Eigen::Vector3d>& t2_t0,
+    const Eigen::Ref<const Eigen::Vector3d>& p_t1,
+    const Eigen::Ref<const Eigen::Vector3d>& t0_t1,
+    const Eigen::Ref<const Eigen::Vector3d>& t1_t1,
+    const Eigen::Ref<const Eigen::Vector3d>& t2_t1,
     double& toi);
 
 /// @brief Compute the time of impact between two edges.
@@ -74,14 +74,14 @@ bool point_triangle_ccd(
 /// @param toi Computed time of impact.
 /// @return True if the edges collide, false otherwise.
 bool edge_edge_ccd(
-    const Eigen::Vector3d& ea0_t0,
-    const Eigen::Vector3d& ea1_t0,
-    const Eigen::Vector3d& eb0_t0,
-    const Eigen::Vector3d& eb1_t0,
-    const Eigen::Vector3d& ea0_t1,
-    const Eigen::Vector3d& ea1_t1,
-    const Eigen::Vector3d& eb0_t1,
-    const Eigen::Vector3d& eb1_t1,
+    const Eigen::Ref<const Eigen::Vector3d>& ea0_t0,
+    const Eigen::Ref<const Eigen::Vector3d>& ea1_t0,
+    const Eigen::Ref<const Eigen::Vector3d>& eb0_t0,
+    const Eigen::Ref<const Eigen::Vector3d>& eb1_t0,
+    const Eigen::Ref<const Eigen::Vector3d>& ea0_t1,
+    const Eigen::Ref<const Eigen::Vector3d>& ea1_t1,
+    const Eigen::Ref<const Eigen::Vector3d>& eb0_t1,
+    const Eigen::Ref<const Eigen::Vector3d>& eb1_t1,
     double& toi);
 
 /// @brief Determine the root interval of a cubic equation.

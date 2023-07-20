@@ -31,8 +31,8 @@ TEST_CASE("Point-Triangle CCD", "[ccd][point-triangle]")
     bool is_colliding = point_triangle_ccd(
         v0, v1, v2, v3, v0 + u0, v1 + u1, v2 + u1, v3 + u1, toi);
 
-    CAPTURE(v0z, u0y, u1y, u0z, EPSILON);
-    REQUIRE(is_colliding >= is_collision_expected);
+    CAPTURE(v0z, u0y, u0z, u1y, EPSILON, toi);
+    REQUIRE(is_colliding == is_collision_expected);
 }
 
 TEST_CASE("Zhongshi test case", "[ccd][point-triangle]")
@@ -65,7 +65,7 @@ TEST_CASE("Zhongshi test case", "[ccd][point-triangle]")
     bool is_colliding = point_triangle_ccd(q, b0, b1, b2, q1, t0, t1, t2, toi);
 
     CAPTURE(qy);
-    CHECK(is_colliding >= is_collision_expected);
+    CHECK(is_colliding == is_collision_expected);
 }
 
 TEST_CASE("Bolun test case", "[ccd][point-triangle]")
@@ -79,7 +79,7 @@ TEST_CASE("Bolun test case", "[ccd][point-triangle]")
     bool is_colliding =
         point_triangle_ccd(x0, x1, x2, x3, x0b, x1b, x2b, x3b, toi);
 
-    CHECK(is_colliding >= is_collision_expected);
+    CHECK(is_colliding == is_collision_expected);
 }
 
 TEST_CASE("No Zero ToI CCD", "[ccd][point-triangle]")

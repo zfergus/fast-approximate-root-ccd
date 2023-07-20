@@ -42,7 +42,7 @@ TEST_CASE("Edge-Edge CCD", "[ccd][edge-edge]")
         edge_edge_ccd(v0, v1, v2, v3, v0 + u0, v1 + u0, v2 + u1, v3 + u1, toi);
 
     CAPTURE(y_displacement, e1x);
-    CHECK(is_colliding >= is_collision_expected);
+    CHECK(is_colliding == is_collision_expected);
 }
 
 TEST_CASE("Dobule root test case", "[ccd][edge-edge][double-root]")
@@ -59,7 +59,7 @@ TEST_CASE("Dobule root test case", "[ccd][edge-edge][double-root]")
     double toi;
     bool is_colliding = edge_edge_ccd(a0s, a1s, b0, b1, a0e, a1e, b0, b1, toi);
 
-    CHECK(is_colliding >= is_collision_expected);
+    CHECK(is_colliding == is_collision_expected);
 }
 
 TEST_CASE("Double root test case 2", "[ccd][edge-edge][double-root]")
@@ -80,7 +80,8 @@ TEST_CASE("Double root test case 2", "[ccd][edge-edge][double-root]")
     double toi;
     bool is_colliding = edge_edge_ccd(a0s, a1s, b0, b1, a0e, a1e, b0, b1, toi);
 
-    CHECK(is_colliding >= is_collision_expected);
+    CAPTURE(t);
+    CHECK(is_colliding == is_collision_expected);
 }
 
 /*

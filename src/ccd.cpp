@@ -1,32 +1,77 @@
 #include "ccd.hpp"
 #include "autogen.hpp"
 
+#include <Eigen/Cholesky>
+
 namespace ccd {
 
-static constexpr double EPSILON = 10 * std::numeric_limits<double>::epsilon();
+namespace {
+    static constexpr double EPSILON =
+        10 * std::numeric_limits<double>::epsilon();
 
-std::array<double, 2>
-solve_quadratic_equation(const double a, const double b, const double c)
-{
-    if (std::abs(a) < EPSILON) {
-        // x = -c / b
-        return { -c / b, -c / b };
+    std::array<double, 2>
+    solve_quadratic_equation(const double a, const double b, const double c)
+    {
+        if (std::abs(a) < EPSILON) {
+            // x = -c / b
+            return { -c / b, -c / b };
+        }
+
+        // x = (-b +- √(b² - 4ac)) / (2a)
+        const double discriminant = b * b - 4 * a * c;
+        if (discriminant < 0) {
+            assert(false);
+            return {};
+        }
+        const double sqrt_discriminant = std::sqrt(discriminant);
+        std::array<double, 2> r = { (-b + sqrt_discriminant) / (2 * a),
+                                    (-b - sqrt_discriminant) / (2 * a) };
+        if (r[0] > r[1]) {
+            std::swap(r[0], r[1]);
+        }
+        return r;
     }
 
-    // x = (-b +- √(b² - 4ac)) / (2a)
-    const double discriminant = b * b - 4 * a * c;
-    if (discriminant < 0) {
-        assert(false);
-        return {};
+    bool is_point_inside_triangle(
+        const Eigen::Ref<const Eigen::Vector3d>& p,
+        const Eigen::Ref<const Eigen::Vector3d>& t0,
+        const Eigen::Ref<const Eigen::Vector3d>& t1,
+        const Eigen::Ref<const Eigen::Vector3d>& t2)
+    {
+        Eigen::Matrix<double, 2, 3> basis;
+        basis.row(0) = t1 - t0; // edge 0
+        basis.row(1) = t2 - t0; // edge 1
+        const Eigen::Matrix2d A = basis * basis.transpose();
+        const Eigen::Vector2d b = basis * (p - t0);
+        const Eigen::Vector2d x = A.ldlt().solve(b);
+        assert((A * x - b).norm() < 1e-10);
+        return x[0] >= 0 && x[1] >= 0 && x[0] + x[1] <= 1;
     }
-    const double sqrt_discriminant = std::sqrt(discriminant);
-    std::array<double, 2> r = { (-b + sqrt_discriminant) / (2 * a),
-                                (-b - sqrt_discriminant) / (2 * a) };
-    if (r[0] > r[1]) {
-        std::swap(r[0], r[1]);
+
+    bool are_edges_intersecting(
+        const Eigen::Ref<const Eigen::Vector3d>& ea0,
+        const Eigen::Ref<const Eigen::Vector3d>& ea1,
+        const Eigen::Ref<const Eigen::Vector3d>& eb0,
+        const Eigen::Ref<const Eigen::Vector3d>& eb1)
+    {
+        const Eigen::Vector3d eb_to_ea = ea0 - eb0;
+        const Eigen::Vector3d ea = ea1 - ea0;
+        const Eigen::Vector3d eb = eb1 - eb0;
+
+        Eigen::Matrix<double, 2, 2> coefMtr;
+        coefMtr(0, 0) = ea.squaredNorm();
+        coefMtr(0, 1) = coefMtr(1, 0) = -eb.dot(ea);
+        coefMtr(1, 1) = eb.squaredNorm();
+
+        Eigen::Vector2d rhs;
+        rhs[0] = -eb_to_ea.dot(ea);
+        rhs[1] = eb_to_ea.dot(eb);
+
+        const Eigen::Vector2d x = coefMtr.ldlt().solve(rhs);
+        assert((coefMtr * x - rhs).norm() < 1e-10);
+        return 0 <= x[0] && x[0] <= 1 && 0 <= x[1] && x[1] <= 1;
     }
-    return r;
-}
+} // namespace
 
 std::array<double, 2> CubicEquation::extrema() const
 {
@@ -59,44 +104,53 @@ bool fast_approximate_root_ccd(const CubicEquation d, double& toi)
 }
 
 bool point_triangle_ccd(
-    const Eigen::Vector3d& p_t0,
-    const Eigen::Vector3d& t0_t0,
-    const Eigen::Vector3d& t1_t0,
-    const Eigen::Vector3d& t2_t0,
-    const Eigen::Vector3d& p_t1,
-    const Eigen::Vector3d& t0_t1,
-    const Eigen::Vector3d& t1_t1,
-    const Eigen::Vector3d& t2_t1,
+    const Eigen::Ref<const Eigen::Vector3d>& p_t0,
+    const Eigen::Ref<const Eigen::Vector3d>& t0_t0,
+    const Eigen::Ref<const Eigen::Vector3d>& t1_t0,
+    const Eigen::Ref<const Eigen::Vector3d>& t2_t0,
+    const Eigen::Ref<const Eigen::Vector3d>& p_t1,
+    const Eigen::Ref<const Eigen::Vector3d>& t0_t1,
+    const Eigen::Ref<const Eigen::Vector3d>& t1_t1,
+    const Eigen::Ref<const Eigen::Vector3d>& t2_t1,
     double& toi)
 {
     return fast_approximate_root_ccd(
-        autogen::point_triangle_ccd_equation(
-            p_t0.x(), p_t0.y(), p_t0.z(), t0_t0.x(), t0_t0.y(), t0_t0.z(),
-            t1_t0.x(), t1_t0.y(), t1_t0.z(), t2_t0.x(), t2_t0.y(), t2_t0.z(),
-            p_t1.x(), p_t1.y(), p_t1.z(), t0_t1.x(), t0_t1.y(), t0_t1.z(),
-            t1_t1.x(), t1_t1.y(), t1_t1.z(), t2_t1.x(), t2_t1.y(), t2_t1.z()),
-        toi);
+               autogen::point_triangle_ccd_equation(
+                   p_t0.x(), p_t0.y(), p_t0.z(), t0_t0.x(), t0_t0.y(),
+                   t0_t0.z(), t1_t0.x(), t1_t0.y(), t1_t0.z(), t2_t0.x(),
+                   t2_t0.y(), t2_t0.z(), p_t1.x(), p_t1.y(), p_t1.z(),
+                   t0_t1.x(), t0_t1.y(), t0_t1.z(), t1_t1.x(), t1_t1.y(),
+                   t1_t1.z(), t2_t1.x(), t2_t1.y(), t2_t1.z()),
+               toi)
+        && is_point_inside_triangle(
+               (p_t1 - p_t0) * toi + p_t0, (t0_t1 - t0_t0) * toi + t0_t0,
+               (t1_t1 - t1_t0) * toi + t1_t0, (t2_t1 - t2_t0) * toi + t2_t0);
 }
 
 bool edge_edge_ccd(
-    const Eigen::Vector3d& ea0_t0,
-    const Eigen::Vector3d& ea1_t0,
-    const Eigen::Vector3d& eb0_t0,
-    const Eigen::Vector3d& eb1_t0,
-    const Eigen::Vector3d& ea0_t1,
-    const Eigen::Vector3d& ea1_t1,
-    const Eigen::Vector3d& eb0_t1,
-    const Eigen::Vector3d& eb1_t1,
+    const Eigen::Ref<const Eigen::Vector3d>& ea0_t0,
+    const Eigen::Ref<const Eigen::Vector3d>& ea1_t0,
+    const Eigen::Ref<const Eigen::Vector3d>& eb0_t0,
+    const Eigen::Ref<const Eigen::Vector3d>& eb1_t0,
+    const Eigen::Ref<const Eigen::Vector3d>& ea0_t1,
+    const Eigen::Ref<const Eigen::Vector3d>& ea1_t1,
+    const Eigen::Ref<const Eigen::Vector3d>& eb0_t1,
+    const Eigen::Ref<const Eigen::Vector3d>& eb1_t1,
     double& toi)
 {
     return fast_approximate_root_ccd(
-        autogen::edge_edge_ccd_equation(
-            ea0_t0.x(), ea0_t0.y(), ea0_t0.z(), ea1_t0.x(), ea1_t0.y(),
-            ea1_t0.z(), eb0_t0.x(), eb0_t0.y(), eb0_t0.z(), eb1_t0.x(),
-            eb1_t0.y(), eb1_t0.z(), ea0_t1.x(), ea0_t1.y(), ea0_t1.z(),
-            ea1_t1.x(), ea1_t1.y(), ea1_t1.z(), eb0_t1.x(), eb0_t1.y(),
-            eb0_t1.z(), eb1_t1.x(), eb1_t1.y(), eb1_t1.z()),
-        toi);
+               autogen::edge_edge_ccd_equation(
+                   ea0_t0.x(), ea0_t0.y(), ea0_t0.z(), ea1_t0.x(), ea1_t0.y(),
+                   ea1_t0.z(), eb0_t0.x(), eb0_t0.y(), eb0_t0.z(), eb1_t0.x(),
+                   eb1_t0.y(), eb1_t0.z(), ea0_t1.x(), ea0_t1.y(), ea0_t1.z(),
+                   ea1_t1.x(), ea1_t1.y(), ea1_t1.z(), eb0_t1.x(), eb0_t1.y(),
+                   eb0_t1.z(), eb1_t1.x(), eb1_t1.y(), eb1_t1.z()),
+               toi)
+        && are_edges_intersecting(
+               (ea0_t1 - ea0_t0) * toi + ea0_t0,
+               (ea1_t1 - ea1_t0) * toi + ea1_t0,
+               (eb0_t1 - eb0_t0) * toi + eb0_t0,
+               (eb1_t1 - eb1_t0) * toi + eb1_t0);
 }
 
 std::optional<RootInterval>
