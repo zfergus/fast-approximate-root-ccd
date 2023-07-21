@@ -78,17 +78,38 @@ std::array<double, 2> CubicEquation::extrema() const
     return solve_quadratic_equation(3 * a, 2 * b, c);
 }
 
+bool CubicEquation::is_nearly_quadratic() const
+{
+    const double denom = b != 0 ? b : 1;
+    return std::abs(a / denom) < EPSILON;
+}
+
+bool CubicEquation::is_nearly_linear() const
+{
+    const double denom = c != 0 ? c : 1;
+    return std::abs(a / denom) < EPSILON && std::abs(b / denom) < EPSILON;
+}
+
+bool CubicEquation::is_nearly_constant() const
+{
+    const double denom = d != 0 ? d : 1;
+    return std::abs(a / denom) < EPSILON && std::abs(b / denom) < EPSILON
+        && std::abs(c / denom) < EPSILON;
+}
+
 bool fast_approximate_root_ccd(const CubicEquation d, double& toi)
 {
-    if (d.a == 0) {
-        if (d.b == 0) {
-            toi = d.c == 0 ? d.d : (-d.d / d.c);
-        } else {
-            const std::array<double, 2> roots =
-                solve_quadratic_equation(d.b, d.c, d.d);
-            assert(roots[0] <= roots[1]);
-            toi = (0 <= roots[0] && roots[0] <= 1) ? roots[0] : roots[1];
-        }
+    if (d.is_nearly_constant()) {
+        toi = 0;
+        return d.d == 0;
+    } else if (d.is_nearly_linear()) {
+        toi = -d.d / d.c;
+        return toi >= 0 && toi <= 1;
+    } else if (d.is_nearly_quadratic()) {
+        const std::array<double, 2> roots =
+            solve_quadratic_equation(d.b, d.c, d.d);
+        assert(roots[0] <= roots[1]);
+        toi = (0 <= roots[0] && roots[0] <= 1) ? roots[0] : roots[1];
         return toi >= 0 && toi <= 1;
     }
 

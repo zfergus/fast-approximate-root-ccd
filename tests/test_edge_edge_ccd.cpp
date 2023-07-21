@@ -11,7 +11,7 @@ TEST_CASE("Edge-Edge CCD", "[ccd][edge-edge]")
     // e0 = (v0, v1)
     Eigen::Vector3d v0(-1, -1, 0);
     Eigen::Vector3d v1(1, -1, 0);
-    // e2 = (v2, v3)
+    // e1 = (v2, v3)
     double e1x = GENERATE(
         -1 - EPSILON, -1, -1 + EPSILON, -0.5, 0, 0.5, 1 - EPSILON, 1,
         1 + EPSILON);
@@ -32,7 +32,8 @@ TEST_CASE("Edge-Edge CCD", "[ccd][edge-edge]")
     }
     SECTION("fixed")
     {
-        u0 << 0, 2 * y_displacement, 0;
+        y_displacement *= 2;
+        u0 << 0, y_displacement, 0;
         u1.setZero();
         is_collision_expected = y_displacement >= 2.0 && e1x >= -1 && e1x <= 1;
     }
@@ -45,7 +46,7 @@ TEST_CASE("Edge-Edge CCD", "[ccd][edge-edge]")
     CHECK(is_colliding == is_collision_expected);
 }
 
-TEST_CASE("Dobule root test case", "[ccd][edge-edge][double-root]")
+TEST_CASE("Double root test case", "[ccd][edge-edge][double-root]")
 {
     const Eigen::Vector3d a0s(-3.0022200, 0.2362580, 0.0165247);
     const Eigen::Vector3d a1s(-3.2347850, 0.8312380, -0.1151003);

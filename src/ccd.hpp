@@ -27,6 +27,10 @@ struct CubicEquation {
     }
 
     std::array<double, 2> extrema() const;
+
+    bool is_nearly_quadratic() const;
+    bool is_nearly_linear() const;
+    bool is_nearly_constant() const;
 };
 
 struct RootInterval {
