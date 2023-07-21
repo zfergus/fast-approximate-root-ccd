@@ -17,7 +17,7 @@ namespace {
             return { { -c / b, -c / b } };
         }
 
-        // x = (-b +- √(b² - 4ac)) / (2a)
+        // x = (-b ± √(b² - 4ac)) / (2a)
         const double discriminant = b * b - 4 * a * c;
         if (discriminant < 0) {
             assert(false);
