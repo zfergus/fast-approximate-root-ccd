@@ -80,21 +80,17 @@ std::array<double, 2> CubicEquation::extrema() const
 
 bool CubicEquation::is_nearly_quadratic() const
 {
-    const double denom = b != 0 ? b : 1;
-    return std::abs(a / denom) < EPSILON;
+    return std::abs(a / (b != 0 ? b : 1)) < EPSILON;
 }
 
 bool CubicEquation::is_nearly_linear() const
 {
-    const double denom = c != 0 ? c : 1;
-    return std::abs(a / denom) < EPSILON && std::abs(b / denom) < EPSILON;
+    return is_nearly_quadratic() && std::abs(b / (c != 0 ? c : 1)) < EPSILON;
 }
 
 bool CubicEquation::is_nearly_constant() const
 {
-    const double denom = d != 0 ? d : 1;
-    return std::abs(a / denom) < EPSILON && std::abs(b / denom) < EPSILON
-        && std::abs(c / denom) < EPSILON;
+    return is_nearly_linear() && std::abs(c / (d != 0 ? d : 1)) < EPSILON;
 }
 
 bool fast_approximate_root_ccd(const CubicEquation d, double& toi)
