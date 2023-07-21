@@ -31,6 +31,15 @@ struct CubicEquation {
     bool is_nearly_quadratic() const;
     bool is_nearly_linear() const;
     bool is_nearly_constant() const;
+
+    CubicEquation& operator*=(const double x)
+    {
+        this->a *= x;
+        this->b *= x;
+        this->c *= x;
+        this->d *= x;
+        return *this;
+    }
 };
 
 struct RootInterval {
