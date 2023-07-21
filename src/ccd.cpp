@@ -73,6 +73,8 @@ namespace {
     }
 } // namespace
 
+// =============================================================================
+
 std::array<double, 2> CubicEquation::extrema() const
 {
     return solve_quadratic_equation(3 * a, 2 * b, c);
@@ -94,40 +96,12 @@ bool CubicEquation::is_nearly_constant() const
     return is_nearly_linear() && std::abs(c / (d != 0 ? d : 1)) < EPSILON;
 }
 
-bool fast_approximate_root_ccd(CubicEquation d, double& toi)
+std::ostream& operator<<(std::ostream& os, const CubicEquation& f)
 {
-    const double d0 = d(0);
-    if (d0 == 0) {
-        toi = 0;
-        return true;
-    } else if (d0 < 0) {
-        d *= -1;
-    }
-
-    if (d.is_nearly_constant()) {
-        toi = 0;
-        return d.d == 0;
-    } else if (d.is_nearly_linear()) {
-        toi = -d.d / d.c;
-        return toi >= 0 && toi <= 1;
-    } else if (d.is_nearly_quadratic()) {
-        const std::array<double, 2> roots =
-            solve_quadratic_equation(d.b, d.c, d.d);
-        assert(roots[0] <= roots[1]);
-        toi = (0 <= roots[0] && roots[0] <= 1) ? roots[0] : roots[1];
-        return toi >= 0 && toi <= 1;
-    }
-
-    const auto root_interval = determine_cubic_root_interval(d);
-    if (!root_interval || root_interval->a > root_interval->b) {
-        return false;
-    }
-
-    toi = modified_newton_raphson(
-        d, root_interval->a, root_interval->min_gradient);
-
-    return toi >= 0 && toi <= 1;
+    return (os << f.a << "x^3 + " << f.b << "x^2 + " << f.c << "x + " << f.d);
 }
+
+// =============================================================================
 
 bool point_triangle_ccd(
     const Eigen::Ref<const Eigen::Vector3d>& p_t0,
@@ -177,6 +151,43 @@ bool edge_edge_ccd(
                (ea1_t1 - ea1_t0) * toi + ea1_t0,
                (eb0_t1 - eb0_t0) * toi + eb0_t0,
                (eb1_t1 - eb1_t0) * toi + eb1_t0);
+}
+
+// =============================================================================
+
+bool fast_approximate_root_ccd(CubicEquation d, double& toi)
+{
+    const double d0 = d(0);
+    if (d0 == 0) {
+        toi = 0;
+        return true;
+    } else if (d0 < 0) {
+        d *= -1;
+    }
+
+    if (d.is_nearly_constant()) {
+        toi = 0;
+        return d.d == 0;
+    } else if (d.is_nearly_linear()) {
+        toi = -d.d / d.c;
+        return toi >= 0 && toi <= 1;
+    } else if (d.is_nearly_quadratic()) {
+        const std::array<double, 2> roots =
+            solve_quadratic_equation(d.b, d.c, d.d);
+        assert(roots[0] <= roots[1]);
+        toi = (0 <= roots[0] && roots[0] <= 1) ? roots[0] : roots[1];
+        return toi >= 0 && toi <= 1;
+    }
+
+    const auto root_interval = determine_cubic_root_interval(d);
+    if (!root_interval || root_interval->a > root_interval->b) {
+        return false;
+    }
+
+    toi = modified_newton_raphson(
+        d, root_interval->a, root_interval->min_gradient);
+
+    return toi >= 0 && toi <= 1;
 }
 
 std::optional<RootInterval>

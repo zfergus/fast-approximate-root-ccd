@@ -3,6 +3,8 @@
 #include <Eigen/Core>
 #include <optional>
 
+#include <iostream>
+
 namespace ccd {
 
 /// @brief Cubic equation of the form ax³ + bx² + cx + d.
@@ -40,6 +42,8 @@ struct CubicEquation {
         this->d *= x;
         return *this;
     }
+
+    friend std::ostream& operator<<(std::ostream& os, const CubicEquation& f);
 };
 
 struct RootInterval {
@@ -97,6 +101,12 @@ bool edge_edge_ccd(
     const Eigen::Ref<const Eigen::Vector3d>& eb0_t1,
     const Eigen::Ref<const Eigen::Vector3d>& eb1_t1,
     double& toi);
+
+/// @brief Compute the roots of a cubic equation.
+/// @param d Cubic equation to compute the roots of.
+/// @param toi Computed time of impact.
+/// @return True if the cubic equation has a root in [0, 1], false otherwise.
+bool fast_approximate_root_ccd(CubicEquation d, double& toi);
 
 /// @brief Determine the root interval of a cubic equation.
 /// @param d Cubic equation to determine the root interval of.
