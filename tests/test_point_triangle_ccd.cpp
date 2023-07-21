@@ -101,3 +101,25 @@ TEST_CASE("No Zero ToI CCD", "[ccd][point-triangle]")
     CAPTURE(toi);
     CHECK(!is_impacting);
 }
+
+TEST_CASE(
+    "Point-triangle false-negative", "[ccd][point-triangle][false-negative]")
+{
+    // clang-format off
+    Eigen::Vector3d  p_t0(-4375459 / 1048576.0, 13354865 / 33554432.0, -11393047 /  8388608.0);
+    Eigen::Vector3d t0_t0(-8363723 / 2097152.0, 16021805 / 33554432.0, -15346925 / 16777216.0);
+    Eigen::Vector3d t1_t0(-4334121 / 1048576.0,  3618099 /  8388608.0, -12072633 /  8388608.0);
+    Eigen::Vector3d t2_t0(-4482915 / 1048576.0,  3521177 /  8388608.0, -10864455 /  8388608.0);
+    Eigen::Vector3d  p_t1(-4219061 / 1048576.0, 10201537 / 16777216.0,  -3974493 /  4194304.0);
+    Eigen::Vector3d t0_t1(-1051037 /  262144.0,  9399217 / 16777216.0,  -6996963 /  8388608.0);
+    Eigen::Vector3d t1_t1(-8539773 / 2097152.0,  4662053 /  8388608.0, -10288603 /  8388608.0);
+    Eigen::Vector3d t2_t1(-8621451 / 2097152.0,  9321975 / 16777216.0,   -151795 /   131072.0);
+    // clang-format on
+
+    double toi;
+    bool is_impacting = point_triangle_ccd(
+        p_t0, t0_t0, t1_t0, t2_t0, p_t1, t0_t1, t1_t1, t2_t1, toi);
+
+    CAPTURE(toi);
+    CHECK(is_impacting);
+}

@@ -173,7 +173,7 @@ bool edge_edge_ccd(
 std::optional<RootInterval>
 determine_cubic_root_interval(const CubicEquation& d)
 {
-    double t0 = 0, t1 = 1;
+    constexpr double t0 = 0, t1 = 1;
     assert(d(t0) != 0);
 
     const auto [tm0, tm1] = d.extrema();
@@ -187,7 +187,7 @@ determine_cubic_root_interval(const CubicEquation& d)
             // assert(d(t0) > 0);
             return std::nullopt;
         }
-        return RootInterval(t_min, t_max, d.derivative(-d.a / (3 * d.a)));
+        return RootInterval(t_max, t_min, d.derivative(-d.b / (3 * d.a)));
     }
 
     const double t_min = tm0, t_max = tm1;
