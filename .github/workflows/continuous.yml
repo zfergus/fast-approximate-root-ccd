@@ -83,13 +83,20 @@ jobs:
       matrix:
         config: [Debug, Release]
     steps:
+      - name: Stetup Conda
+        uses: s-weigand/setup-conda@v1
+        with:
+          conda-channels: anaconda, conda-forge
+          python-version: 3.6
+
+      - name: Install Dependencies
+        shell: powershell
+        run: conda install -c conda-forge mpir -y
+
       - name: Checkout repository
         uses: actions/checkout@v2.5.0
         with:
           fetch-depth: 10
-
-      - name: Install Dependencies
-        run: conda install -c conda-forge mpir -y
 
       - name: Install Ninja
         uses: seanmiddleditch/gha-setup-ninja@master
