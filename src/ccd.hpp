@@ -1,62 +1,13 @@
 #pragma once
 
+#include "cubic.hpp"
+
 #include <Eigen/Core>
 #include <optional>
 
-#include <iostream>
+#include <functional>
 
 namespace ccd {
-
-/// @brief Cubic equation of the form ax³ + bx² + cx + d.
-struct CubicEquation {
-    /// @brief Coefficients of the cubic equation.
-    double a, b, c, d;
-
-    /// @brief Evaluate the cubic equation at t.
-    /// @param t Value of t to evaluate the cubic equation at.
-    /// @return Value of the cubic equation at t.
-    double operator()(const double x) const
-    {
-        return x * (x * (x * a + b) + c) + d;
-    }
-
-    /// @brief Evaluate the derivative of the cubic equation at t.
-    /// @param t Value of t to evaluate the derivative of the cubic equation at.
-    /// @return Value of the derivative of the cubic equation at t.
-    double derivative(const double x) const
-    {
-        return x * (x * 3 * a + 2 * b) + c;
-    }
-
-    std::array<double, 2> extrema() const;
-
-    bool is_nearly_quadratic() const;
-    bool is_nearly_linear() const;
-    bool is_nearly_constant() const;
-
-    CubicEquation& operator*=(const double x)
-    {
-        this->a *= x;
-        this->b *= x;
-        this->c *= x;
-        this->d *= x;
-        return *this;
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const CubicEquation& f);
-};
-
-struct RootInterval {
-    RootInterval(const double a, const double b, const double min_gradient)
-        : a(a)
-        , b(b)
-        , min_gradient(min_gradient)
-    {
-    }
-
-    double a, b;
-    double min_gradient;
-};
 
 /// @brief Compute the time of impact between a point and triangle.
 /// @param p_t0 Point at time 0.
@@ -106,25 +57,34 @@ bool edge_edge_ccd(
 /// @param d Cubic equation to compute the roots of.
 /// @param toi Computed time of impact.
 /// @return True if the cubic equation has a root in [0, 1], false otherwise.
-bool fast_approximate_root_ccd(CubicEquation d, double& toi);
+bool fast_approximate_root_ccd(
+    CubicEquation d,
+    const std::function<bool(const double)>& is_inside,
+    double& toi);
+
+/// @brief Root interval of a polynomial.
+struct RootInterval {
+    /// @brief Construct a root interval.
+    /// @param a Lower bound of the root interval.
+    /// @param b Upper bound of the root interval.
+    /// @param min_gradient  Minimum gradient of the polynomial in the interval.
+    RootInterval(const double a, const double b, const double min_gradient)
+        : a(a)
+        , b(b)
+        , min_gradient(min_gradient)
+    {
+    }
+
+    double a; ///< Lower bound of the root interval.
+    double b; ///< Upper bound of the root interval.
+    /// Minimum gradient of the polynomial in the interval.
+    double min_gradient;
+};
 
 /// @brief Determine the root interval of a cubic equation.
 /// @param d Cubic equation to determine the root interval of.
 /// @return Root interval of the cubic equation.
 std::optional<RootInterval>
 determine_cubic_root_interval(const CubicEquation& d);
-
-/// @brief Perform a modified Newton-Raphson root finding algorithm to find the roots of a cubic equation.
-/// @param f Cubic equation to find the roots of.
-/// @param x0 Initial guess for the root.
-/// @param tolerance Tolerance for the root finding algorithm.
-/// @param max_iterations Maximum number of iterations for the root finding algorithm.
-/// @return Root of the cubic equation.
-double modified_newton_raphson(
-    const CubicEquation& f,
-    const double x0,
-    const double locally_min_gradient,
-    const double tolerance = 1e-8,
-    const unsigned max_iterations = std::numeric_limits<unsigned>::max());
 
 } // namespace ccd

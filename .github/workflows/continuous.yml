@@ -36,13 +36,13 @@ jobs:
       - name: Dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get install ccache
+          sudo apt-get install ccache libgmp-dev
           echo 'CACHE_PATH=~/.cache/ccache' >> "$GITHUB_ENV"
 
       - name: Dependencies (macOS)
         if: runner.os == 'macOS'
         run: |
-          brew install ccache
+          brew install ccache gmp
           echo 'CACHE_PATH=~/Library/Caches/ccache' >> "$GITHUB_ENV"
 
       - name: Cache Build
@@ -88,12 +88,17 @@ jobs:
         with:
           fetch-depth: 10
 
+      - name: Install Dependencies
+        run: conda install -c conda-forge mpir -y
+
       - name: Install Ninja
         uses: seanmiddleditch/gha-setup-ninja@master
 
-      - name: Set env variable for sccache
+      - name: Set env variable
         run: |
           echo "appdata=$env:LOCALAPPDATA" >> ${env:GITHUB_ENV}
+          echo "GMP_INC=C:\Miniconda\Library\include" >> ${env:GITHUB_ENV}
+          echo "GMP_LIB=C:\Miniconda\Library\lib" >> ${env:GITHUB_ENV}
 
       - name: Cache build
         id: cache-build
@@ -123,4 +128,8 @@ jobs:
           cmake --build build -j1
 
       - name: Tests
-        run: cd build; ctest --verbose -j2
+        run: |
+          cd build
+          cp C:\Miniconda\Library\bin\mpir.dll .\
+          cp C:\Miniconda\Library\bin\gmp.dll .\
+          ctest --verbose -j2

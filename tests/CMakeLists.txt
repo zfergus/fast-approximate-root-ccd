@@ -5,6 +5,7 @@
 add_executable(far_ccd_tests
   test_edge_edge_ccd.cpp
   test_point_triangle_ccd.cpp
+  test_dataset.cpp
 )
 
 target_include_directories(far_ccd_tests PUBLIC ".")
@@ -18,11 +19,11 @@ target_link_libraries(far_ccd_tests PUBLIC far_ccd::far_ccd)
 include(catch2)
 target_link_libraries(far_ccd_tests PUBLIC Catch2::Catch2WithMain)
 
-# include(finite_diff)
-# target_link_libraries(far_ccd_tests PUBLIC finitediff::finitediff)
+find_package(GMP REQUIRED)
+target_link_libraries(far_ccd_tests PUBLIC gmp::gmp)
 
-# include(json)
-# target_link_libraries(far_ccd_tests PUBLIC nlohmann_json::nlohmann_json)
+include(sample-queries)
+target_link_libraries(far_ccd_tests PUBLIC sample_queries::sample_queries)
 
 # Extra warnings (link last for highest priority)
 include(far_ccd_warnings)

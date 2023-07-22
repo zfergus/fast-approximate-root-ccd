@@ -2,6 +2,8 @@
 
 namespace ccd::autogen {
 
+/// @brief Compute the coefficients of the cubic equation for the point-triangle CCD.
+/// @return Cubic equation of the point-triangle CCD.
 CubicEquation point_triangle_ccd_equation(
     const double x00,
     const double y00,
@@ -28,6 +30,8 @@ CubicEquation point_triangle_ccd_equation(
     const double y31,
     const double z31);
 
+/// @brief Compute the coefficients of the cubic equation for the edge-edge CCD.
+/// @return Cubic equation of the edge-edge CCD.
 CubicEquation edge_edge_ccd_equation(
     const double x00,
     const double y00,
