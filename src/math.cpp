@@ -1,5 +1,7 @@
 #include "math.hpp"
 
+#include <cmath>
+
 namespace ccd {
 
 std::array<double, 2>

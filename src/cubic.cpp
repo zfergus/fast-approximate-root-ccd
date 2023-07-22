@@ -1,6 +1,8 @@
 #include "cubic.hpp"
 #include "math.hpp"
 
+#include <cassert>
+
 namespace ccd {
 
 std::array<double, 2> CubicEquation::extrema() const
