@@ -1,6 +1,7 @@
 #include "math.hpp"
 
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 
 namespace ccd {
