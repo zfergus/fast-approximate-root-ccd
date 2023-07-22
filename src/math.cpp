@@ -1,5 +1,6 @@
 #include "math.hpp"
 
+#include <algorithm>
 #include <cmath>
 
 namespace ccd {

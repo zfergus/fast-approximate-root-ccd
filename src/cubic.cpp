@@ -1,6 +1,7 @@
 #include "cubic.hpp"
 #include "math.hpp"
 
+#include <algorithm>
 #include <cassert>
 
 namespace ccd {
