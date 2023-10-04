@@ -6,13 +6,13 @@ Implementation of "Fast Root Approximate in Cubic CCD" from "Penetration-free Pr
 
 ## False Negatives (i.e., Missed Collision)
 
-After testing this method is known to produce false negatives (i.e., miss collisions).
+After testing this method can produce false negatives (i.e., miss collisions).
 
-Note, while this is a faithful implementation of the paper's algorithmic description, there maybe technical implementation details missing from the paper that are required for the algorithm to work correctly. Though, without the original authors' implementation, it is difficult to know.
+Note, that while this is a faithful implementation of the paper's algorithmic description, there may be technical implementation details missing from the paper that are required for the algorithm to work correctly. However, without the original authors' implementation, it is difficult to know.
 
 ### Example: Point-Triangle
 
-This point-triangle query produces a false-negative:
+This point-triangle query produces a false negative:
 ```c++
 p_t0  <<  -5066329 / 1048576.0,  3747703 /  8388608.0,  -9110393 / 4194304.0;
 t0_t0 <<  -5097349 / 1048576.0, 15565867 / 33554432.0,  -8419809 / 4194304.0;
@@ -27,7 +27,7 @@ t2_t1 <<  -9736347 / 2097152.0, 10062471 / 16777216.0,  -4408415 / 2097152.0;
 
 ### Example: Edge-Edge
 
-This edge-edge query produces a false-negative:
+This edge-edge query produces a false negative:
 ```c++
 ea0_t0 << 1, 0.50803125, 2.10835646075301e-18;
 ea1_t0 << -2.38233935445388e-18, 0.50803125, 1;
