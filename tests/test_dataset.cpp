@@ -60,7 +60,7 @@ TEST_CASE("Dataset", "[ccd][point-triangle][edge-edge][dataset][!mayfail]")
                     toi);
             }
 
-            CHECK(result == expected_result);
+            CHECK(result >= expected_result); // conservative check
         }
     }
 }

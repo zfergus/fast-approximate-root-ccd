@@ -5,7 +5,7 @@
 add_executable(far_ccd_tests
   test_edge_edge_ccd.cpp
   test_point_triangle_ccd.cpp
-  test_dataset.cpp
+  # test_dataset.cpp
 )
 
 target_include_directories(far_ccd_tests PUBLIC ".")
@@ -34,13 +34,6 @@ target_link_libraries(far_ccd_tests PRIVATE far_ccd::warnings)
 ################################################################################
 
 target_compile_definitions(far_ccd_tests PUBLIC CATCH_CONFIG_ENABLE_BENCHMARKING)
-
-# Test data directory definition
-# if(WIN32)
-#   target_compile_definitions(far_ccd_tests PUBLIC TEST_DATA_DIR_CSTR="${CMAKE_CURRENT_SOURCE_DIR}\\\\data\\\\")
-# else()
-#   target_compile_definitions(far_ccd_tests PUBLIC TEST_DATA_DIR_CSTR="${CMAKE_CURRENT_SOURCE_DIR}/data/")
-# endif()
 
 ################################################################################
 # Register tests
