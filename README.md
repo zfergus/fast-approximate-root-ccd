@@ -1,4 +1,4 @@
-# Fast Approximate Root in Cubic CCD
+# Fast Root Approximate in Cubic CCD
 
 [![Build](https://github.com/zfergus/fast-approximate-root-ccd/actions/workflows/continuous.yml/badge.svg)](https://github.com/zfergus/fast-approximate-root-ccd/actions/workflows/continuous.yml)
 
